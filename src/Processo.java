@@ -1,8 +1,13 @@
 import java.util.LinkedList;
 import java.util.Random;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class Processo {
 	
+	String nomeArquivo = "Processo.txt";
 	private int pid;
 	private boolean ehCoordenador = false;
 	private Thread utilizaRecurso = new Thread();
@@ -55,6 +60,16 @@ public class Processo {
 		
 		coordenador.recursoEmUso = estaEmUso;
 		ControladorDeProcessos.setConsumidor(estaEmUso ? consumidor : null);
+		
+		try {
+			String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
+			FileWriter myWriter = new FileWriter(nomeArquivo, true);
+			myWriter.write("Processo " + consumidor + " esta consumindo o recurso em: " + timeStamp + "\n");
+			myWriter.close();
+		  } catch (IOException e) {
+			System.out.println("Erro ao escrever no arquivo txt");
+			e.printStackTrace();
+		  }
 	}
 	
 	private LinkedList<Processo> getListaDeEspera() {
