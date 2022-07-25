@@ -10,8 +10,8 @@ public class Main
     private static final int CONSOME_RECURSO_MAX = 10000; 
 
     int i = 0;
-    public static int[][] processosAtendidos;
-
+    static ArrayList<Integer> totalProcessos = new ArrayList<Integer>();
+    static ArrayList<Integer> qtdProcessosExecutados = new ArrayList<Integer>();
 
     private static final Object lock = new Object();
 
@@ -33,9 +33,9 @@ public class Main
                         if(processosAtivos.isEmpty()) processo.setEhCoordenador(true);
 
                         processosAtivos.add(processo);
-                        processosAtendidos[0][0] = processo.getPid();
-                        processosAtendidos[0][1] = 0;
-                        System.out.println("CRIAR MATRIZ" + processosAtendidos);
+                        totalProcessos.add(processo.getPid());
+                        qtdProcessosExecutados.add(0);
+                        System.out.println("CRIAR MATRIZ" + totalProcessos);
 
                     }
 
@@ -58,9 +58,6 @@ public class Main
         }
 
         System.out.println("Processo Ativos " + ControladorDeProcessos.getProcessosAtivos() + " Id Unico.");
-       
-        
-        System.out.println("ATRIBUIR VALOR" + processosAtendidos);
         return idRandom;
     }
 
@@ -123,6 +120,18 @@ public class Main
 
                             Processo processoConsumidor = processosAtivos.get(indexProcessoAleatorio);
                             processoConsumidor.acessarRecursoCompartilhado();
+
+                            int aux = totalProcessos.indexOf(processoConsumidor.getPid());
+
+                            int qtd = qtdProcessosExecutados.get(aux) + 1;
+
+                            qtdProcessosExecutados.set(aux, qtd);
+                            
+                            System.out.println("TOTAL AAAAAAAAAAA " + totalProcessos);
+                            System.out.println("AUX AAAAAAAAAAA " + qtdProcessosExecutados);
+
+
+
                         }
                     }
                 }

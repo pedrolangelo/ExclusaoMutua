@@ -19,6 +19,10 @@ public class ControladorDeProcessos {
 	public static ArrayList<Processo> getProcessosAtivos() {
 		return processosAtivos;
 	}
+
+	public static ArrayList<Processo> processosAtendidos() {
+		return processosAtivos;
+	}
 	
 	public static RecursoCompartilhado getRecurso() {
 		return recurso;
