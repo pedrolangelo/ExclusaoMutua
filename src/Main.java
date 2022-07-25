@@ -9,6 +9,10 @@ public class Main
     private static final int CONSOME_RECURSO_MIN = 5000;
     private static final int CONSOME_RECURSO_MAX = 10000; 
 
+    int i = 0;
+    public static int[][] processosAtendidos;
+
+
     private static final Object lock = new Object();
 
     public static void main(String[] args) {
@@ -29,6 +33,10 @@ public class Main
                         if(processosAtivos.isEmpty()) processo.setEhCoordenador(true);
 
                         processosAtivos.add(processo);
+                        processosAtendidos[0][0] = processo.getPid();
+                        processosAtendidos[0][1] = 0;
+                        System.out.println("CRIAR MATRIZ" + processosAtendidos);
+
                     }
 
                     esperar(ADICIONA);
@@ -43,9 +51,16 @@ public class Main
         int idRandom = random.nextInt(1000);
 
         for(Processo p : processosAtivos){
-            if(p.getPid() == idRandom) return gerarIdUnico(processosAtivos);
+            if(p.getPid() == idRandom) {
+
+                return gerarIdUnico(processosAtivos);
+            }
         }
 
+        System.out.println("Processo Ativos " + ControladorDeProcessos.getProcessosAtivos() + " Id Unico.");
+       
+        
+        System.out.println("ATRIBUIR VALOR" + processosAtendidos);
         return idRandom;
     }
 
@@ -65,6 +80,8 @@ public class Main
                 }
             }
         }).start();
+        System.out.println("Processo Ativos " + ControladorDeProcessos.getProcessosAtivos() + " Desativar.");
+
     }
 
     public static void inativarCoordenador(ArrayList<Processo> processosAtivos){
