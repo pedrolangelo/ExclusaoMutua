@@ -4,10 +4,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.*;
 
 public class Processo {
 	
 	String nomeArquivo = "Processo.txt";
+	String logCoordenadorTxt = "logCoordenador.txt";
 	private int pid;
 	private boolean ehCoordenador = false;
 	private Thread utilizaRecurso = new Thread();
@@ -19,6 +22,9 @@ public class Processo {
 	
 	private static final int USO_PROCESSO_MIN = 10000;
 	private static final int USO_PROCESSO_MAX = 20000;
+
+	private static ArrayList<Integer> totalProcessos = new ArrayList<Integer>();
+	private static ArrayList<Integer> qtdProcessosExecutados = new ArrayList<Integer>();
 	
 	public Processo(int pid) {
 		this.pid = pid;
@@ -56,22 +62,47 @@ public class Processo {
 	}
 	
 	public void setRecursoEmUso(boolean estaEmUso, Processo consumidor) {
-		Processo coordenador = encontrarCoordenador();
-		
+		Processo coordenador = encontrarCoordenador();		
 		coordenador.recursoEmUso = estaEmUso;
 		ControladorDeProcessos.setConsumidor(estaEmUso ? consumidor : null);
 		
 		try {
+			System.out.println("ENTREI NO TRY 1 ");
 			String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
 			FileWriter myWriter = new FileWriter(nomeArquivo, true);
 			myWriter.write("Processo " + consumidor + " esta consumindo o recurso em: " + timeStamp + "\n");
 			myWriter.close();
+
+			int aux = totalProcessos.indexOf(consumidor.getPid());
+
+			int qtd = qtdProcessosExecutados.get(aux) + 1;
+  
+			qtdProcessosExecutados.set(aux, qtd);
 		  } catch (IOException e) {
-			System.out.println("Erro ao escrever no arquivo txt");
-			e.printStackTrace();
+ 			e.printStackTrace();
 		  }
+		try {
+		System.out.println("ENTREI NO TRY 2 ");
+		  String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
+		  FileWriter logCoordenador = new FileWriter(logCoordenadorTxt, true);
+		  ArrayList<String> mensagem = new ArrayList<String>();
+		  mensagem.add("3");
+		  mensagem.add(Integer.toString(this.getPid()));
+		  logCoordenador.write("Mensagem: " + mensagem + " Horario: " + timeStamp + "\n");
+		  logCoordenador.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-	
+
+	public static ArrayList<Integer> getProcessosAtendidos() {
+		return totalProcessos;
+	}
+
+	public static ArrayList<Integer> getQtdAtendimentos() {
+		return qtdProcessosExecutados;
+	}
+
 	private LinkedList<Processo> getListaDeEspera() {
 		return encontrarCoordenador().listaDeEspera;
 	}
@@ -99,10 +130,21 @@ public class Processo {
 		if(ControladorDeProcessos.isUsandoRecurso(this) || this.isCoordenador())
 			return;
 		
+		try {
+			String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
+			FileWriter logCoordenador = new FileWriter(logCoordenadorTxt, true);
+			ArrayList<String> mensagem2 = new ArrayList<String>();
+			mensagem2.add("1");
+			mensagem2.add(Integer.toString(this.getPid()));
+			logCoordenador.write("Mensagem: " + mensagem2 + " Horario: " + timeStamp + "\n");
+			logCoordenador.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		String resultado = conexao.realizarRequisicao("Processo " + this + " quer consumir o recurso.\n");
-		
-		System.out.println("Resultado da requisicao do processo " + this + ": " + resultado);
-		
+
+/* 		System.out.println("Resultado da requisicao do processo " + this + ": " + resultado);
+ */		
 		if(resultado.equals(Conexao.PERMITIR_ACESSO))
 			utilizarRecurso(this);
 		else if(resultado.equals(Conexao.NEGAR_ACESSO))
@@ -112,8 +154,8 @@ public class Processo {
 	private void adicionarNaListaDeEspera(Processo processoEmEspera) {
 		getListaDeEspera().add(processoEmEspera);
 		
-		System.out.println("Processo " + this + " foi adicionado na lista de espera.");
-		System.out.println("Lista de espera: " + getListaDeEspera());
+	/* 	System.out.println("Processo " + this + " foi adicionado na lista de espera.");
+		System.out.println("Lista de espera: " + getListaDeEspera()); */
 	}
 	
 	private void utilizarRecurso(Processo processo) {
@@ -123,15 +165,15 @@ public class Processo {
 		utilizaRecurso = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				System.out.println("Processo " + processo + " está consumindo o recurso.");
-				setRecursoEmUso(true, processo);
+/* 				System.out.println("Processo " + processo + " está consumindo o recurso.");
+ */				setRecursoEmUso(true, processo);
 				
 				try {
 					Thread.sleep(randomUsageTime);
 				} catch (InterruptedException e) { }
 				
-				System.out.println("Processo " + processo + " parou de consumir o recurso.");
-				processo.liberarRecurso();
+/* 				System.out.println("Processo " + processo + " parou de consumir o recurso.");
+ */				processo.liberarRecurso();
 			}
 		});
 		utilizaRecurso.start();
@@ -143,8 +185,8 @@ public class Processo {
 		if(!isListaDeEsperaVazia()) {
 			Processo processoEmEspera = getListaDeEspera().removeFirst();
 			processoEmEspera.acessarRecursoCompartilhado();
-			System.out.println("Processo " + processoEmEspera + " foi removido da lista de espera.");
-			System.out.println("Lista de espera: " + getListaDeEspera());
+	/* 		System.out.println("Processo " + processoEmEspera + " foi removido da lista de espera.");
+			System.out.println("Lista de espera: " + getListaDeEspera()); */
 		}
 	}
 	

@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Calendar;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 /**
  * 
@@ -11,6 +15,7 @@ import java.net.Socket;
  *
  */
 public class Conexao {
+	String logCoordenadorTxt = "logCoordenador.txt";
 
 	private boolean conectado = true;
 	public static final String PERMITIR_ACESSO = "PERMITIR";
@@ -20,8 +25,8 @@ public class Conexao {
 	private ServerSocket listenSocket;
 	
 	public void conectar(Processo coordenador) {
-		System.out.println("Coordenador " + coordenador + " pronto para receber requisicoes.");
-		new Thread(new Runnable() {
+/* 		System.out.println("Coordenador " + coordenador + " pronto para receber requisicoes.");
+ */		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -39,22 +44,34 @@ public class Conexao {
 
 						// le os dados enviados pelo cliente
 						String rBuf = rec.readLine();
-						System.out.println(rBuf);
-						
+/* 						System.out.println(rBuf);
+ */						
 						// coloca a resposta em um buffer e envia para o cliente
 						DataOutputStream d = new DataOutputStream(sock.getOutputStream());
 						String sBuf = "Error!\n";
 						
 						if(coordenador.isRecursoEmUso())
 							sBuf = NEGAR_ACESSO + "\n";
-						else
+						else{
 							sBuf = PERMITIR_ACESSO + "\n";
+							try {
+								String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
+								FileWriter logCoordenador = new FileWriter(logCoordenadorTxt, true);
+								ArrayList<String> mensagem = new ArrayList<String>();
+								mensagem.add("2");
+								mensagem.add(Integer.toString(coordenador.getPid()));
+								logCoordenador.write("Mensagem: " + mensagem + " Horario: " + timeStamp + "\n");
+								logCoordenador.close();
+							  } catch (IOException e) {
+								  e.printStackTrace();
+							  }
+						}
 						d.write(sBuf.getBytes("UTF-8"));
 					}
-					System.out.println("Conexao encerrada.");
-				} catch (IOException e) {
-					System.out.println("Conexao encerrada.");
-				}
+/* 					System.out.println("Conexao encerrada.");
+ */				} catch (IOException e) {
+/* 					System.out.println("Conexao encerrada.");
+ */				}
 			}
 		}).start();
 	}
@@ -78,8 +95,8 @@ public class Conexao {
 
 			sock.close();
 		} catch (Exception e) {
-			System.out.println("A requisicao nao foi finalizada corretamente.");
-		}
+/* 			System.out.println("A requisicao nao foi finalizada corretamente.");
+ */		}
 		return rBuf;
 	}
 	
@@ -88,14 +105,14 @@ public class Conexao {
 		try {
 			sock.close();
 		} catch (IOException | NullPointerException e) {
-			System.out.println("Erro ao encerrar a conexao: ");
-			e.printStackTrace();
+/* 			System.out.println("Erro ao encerrar a conexao: ");
+ */			e.printStackTrace();
 		}
 		try {
 			listenSocket.close();
 		} catch (IOException | NullPointerException e) {
-			System.out.println("Erro ao encerrar a conexao: ");
-			e.printStackTrace();
+/* 			System.out.println("Erro ao encerrar a conexao: ");
+ */			e.printStackTrace();
 		}
 	}	
 }
