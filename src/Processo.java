@@ -66,8 +66,6 @@ public class Processo {
 		ControladorDeProcessos.setConsumidor(estaEmUso ? consumidor : null);
 		
 		try {
-			System.out.println("Região crítica sendo utilizada pelo processo" + consumidor.getPid());
-
 			String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
 			FileWriter myWriter = new FileWriter(nomeArquivo, true);
 			myWriter.write("Processo " + consumidor + " esta consumindo o recurso em: " + timeStamp + "\n");

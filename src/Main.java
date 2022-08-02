@@ -12,8 +12,7 @@ public class Main {
     private static final Object lock = new Object();
 
     public static void main(String[] args) {
-        criarProcessos(ControladorDeProcessos.getProcessosAtivos(), Processo.getProcessosAtendidos(),
-                Processo.getQtdAtendimentos());
+        criarProcessos(ControladorDeProcessos.getProcessosAtivos(), Processo.getProcessosAtendidos(), Processo.getQtdAtendimentos());
         inativarCoordenador(ControladorDeProcessos.getProcessosAtivos());
         inativarProcesso(ControladorDeProcessos.getProcessosAtivos());
         acessarRecurso(ControladorDeProcessos.getProcessosAtivos());
