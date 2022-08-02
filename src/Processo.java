@@ -168,7 +168,6 @@ public class Processo {
 					Thread.sleep(randomUsageTime);
 				} catch (InterruptedException e) { }
 				
-				processo.liberarRecurso();
 				try {
 					String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
 					FileWriter logCoordenador = new FileWriter(logCoordenadorTxt, true);
@@ -180,6 +179,7 @@ public class Processo {
 				  } catch (IOException e) {
 					  e.printStackTrace();
 				  }
+				processo.liberarRecurso();
 			}
 		});
 		utilizaRecurso.start();
