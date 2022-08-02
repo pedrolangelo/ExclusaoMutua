@@ -1,10 +1,6 @@
 import java.util.ArrayList;
 
-/*
- * 
- * @author Alex Serodio Goncalves e Luma Kuhl
- *
- */
+
 
 public class ControladorDeProcessos {
 

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 /**
  * 
- * @author Alex Serodio Goncalves e Luma Kuhl
+ * @author Julio, Larissa e Pedro Lucas
  *
  */
 public class Conexao {
