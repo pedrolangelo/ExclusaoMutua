@@ -51,18 +51,6 @@ public class Conexao {
 							sBuf = NEGAR_ACESSO + "\n";
 						else {
 							sBuf = PERMITIR_ACESSO + "\n";
-							try {
-								String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
-										.format(Calendar.getInstance().getTime());
-								FileWriter logCoordenador = new FileWriter(logCoordenadorTxt, true);
-								ArrayList<String> mensagem = new ArrayList<String>();
-								mensagem.add("2");
-								mensagem.add(Integer.toString(coordenador.getPid()));
-								logCoordenador.write("Mensagem: " + mensagem + " Horario: " + timeStamp + "\n");
-								logCoordenador.close();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
 						}
 						d.write(sBuf.getBytes("UTF-8"));
 					}

@@ -79,17 +79,6 @@ public class Processo {
 		  } catch (IOException e) {
  			e.printStackTrace();
 		  }
-		try {
-		  String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
-		  FileWriter logCoordenador = new FileWriter(logCoordenadorTxt, true);
-		  ArrayList<String> mensagem = new ArrayList<String>();
-		  mensagem.add("3");
-		  mensagem.add(Integer.toString(this.getPid()));
-		  logCoordenador.write("Mensagem: " + mensagem + " Horario: " + timeStamp + "\n");
-		  logCoordenador.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public static ArrayList<Integer> getProcessosAtendidos() {
@@ -124,9 +113,9 @@ public class Processo {
 	}
 
 	public void acessarRecursoCompartilhado() {
-		if(ControladorDeProcessos.isUsandoRecurso(this) || this.isCoordenador())
+		if(ControladorDeProcessos.isUsandoRecurso(this) || this.isCoordenador()){
 			return;
-		
+		}
 		try {
 			String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
 			FileWriter logCoordenador = new FileWriter(logCoordenadorTxt, true);
@@ -138,13 +127,27 @@ public class Processo {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+
 		String resultado = conexao.realizarRequisicao("Processo " + this + " quer consumir o recurso.\n");
 	
-		if(resultado.equals(Conexao.PERMITIR_ACESSO))
+		if(resultado.equals(Conexao.PERMITIR_ACESSO)){
+			try {
+				String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
+						.format(Calendar.getInstance().getTime());
+				FileWriter logCoordenador = new FileWriter(logCoordenadorTxt, true);
+				ArrayList<String> mensagem = new ArrayList<String>();
+				mensagem.add("2");
+				mensagem.add(Integer.toString(this.getPid()));
+				logCoordenador.write("Mensagem: " + mensagem + " Horario: " + timeStamp + "\n");
+				logCoordenador.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			utilizarRecurso(this);
+		}
+
 		else if(resultado.equals(Conexao.NEGAR_ACESSO))
 			adicionarNaListaDeEspera(this);
-			System.out.println("Proceso " + this + " em espera");
 	}
 	
 	private void adicionarNaListaDeEspera(Processo processoEmEspera) {
@@ -166,6 +169,17 @@ public class Processo {
 				} catch (InterruptedException e) { }
 				
 				processo.liberarRecurso();
+				try {
+					String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
+					FileWriter logCoordenador = new FileWriter(logCoordenadorTxt, true);
+					ArrayList<String> mensagem = new ArrayList<String>();
+					mensagem.add("3");
+					mensagem.add(Integer.toString(processo.getPid()));
+					logCoordenador.write("Mensagem: " + mensagem + " Horario: " + timeStamp + "\n");
+					logCoordenador.close();
+				  } catch (IOException e) {
+					  e.printStackTrace();
+				  }
 			}
 		});
 		utilizaRecurso.start();
