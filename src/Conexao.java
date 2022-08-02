@@ -23,18 +23,17 @@ public class Conexao {
 	private static final int PORTA = 8000;
 	private Socket sock;
 	private ServerSocket listenSocket;
-	
+
 	public void conectar(Processo coordenador) {
-/* 		System.out.println("Coordenador " + coordenador + " pronto para receber requisicoes.");
- */		new Thread(new Runnable() {
+		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
 					// cria um socket TCP para pedidos de conexão
 					listenSocket = new ServerSocket(PORTA);
-					
+
 					// fica conectado enquanto o coordenador estiver vivo
-					while(conectado) {
+					while (conectado) {
 						// aguarda ate um cliente pedir por uma conexao
 						sock = listenSocket.accept();
 
@@ -44,38 +43,35 @@ public class Conexao {
 
 						// le os dados enviados pelo cliente
 						String rBuf = rec.readLine();
-/* 						System.out.println(rBuf);
- */						
 						// coloca a resposta em um buffer e envia para o cliente
 						DataOutputStream d = new DataOutputStream(sock.getOutputStream());
 						String sBuf = "Error!\n";
-						
-						if(coordenador.isRecursoEmUso())
+
+						if (coordenador.isRecursoEmUso())
 							sBuf = NEGAR_ACESSO + "\n";
-						else{
+						else {
 							sBuf = PERMITIR_ACESSO + "\n";
 							try {
-								String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
+								String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
+										.format(Calendar.getInstance().getTime());
 								FileWriter logCoordenador = new FileWriter(logCoordenadorTxt, true);
 								ArrayList<String> mensagem = new ArrayList<String>();
 								mensagem.add("2");
 								mensagem.add(Integer.toString(coordenador.getPid()));
 								logCoordenador.write("Mensagem: " + mensagem + " Horario: " + timeStamp + "\n");
 								logCoordenador.close();
-							  } catch (IOException e) {
-								  e.printStackTrace();
-							  }
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
 						}
 						d.write(sBuf.getBytes("UTF-8"));
 					}
-/* 					System.out.println("Conexao encerrada.");
- */				} catch (IOException e) {
-/* 					System.out.println("Conexao encerrada.");
- */				}
+				} catch (IOException e) {
+				}
 			}
 		}).start();
 	}
-	
+
 	public String realizarRequisicao(String mensagem) {
 		String rBuf = "ERROR!";
 		try {
@@ -89,30 +85,27 @@ public class Conexao {
 			// prepara um buffer para receber a resposta do servidor
 			InputStreamReader s = new InputStreamReader(sock.getInputStream());
 			BufferedReader rec = new BufferedReader(s);
-			
+
 			// le os dados enviados pela aplicacao servidora
 			rBuf = rec.readLine();
 
 			sock.close();
 		} catch (Exception e) {
-/* 			System.out.println("A requisicao nao foi finalizada corretamente.");
- */		}
+			 }
 		return rBuf;
 	}
-	
+
 	public void encerrarConexao() {
 		conectado = false;
 		try {
 			sock.close();
 		} catch (IOException | NullPointerException e) {
-/* 			System.out.println("Erro ao encerrar a conexao: ");
- */			e.printStackTrace();
+			 e.printStackTrace();
 		}
 		try {
 			listenSocket.close();
 		} catch (IOException | NullPointerException e) {
-/* 			System.out.println("Erro ao encerrar a conexao: ");
- */			e.printStackTrace();
+			 e.printStackTrace();
 		}
-	}	
+	}
 }

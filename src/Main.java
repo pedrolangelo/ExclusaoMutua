@@ -12,14 +12,16 @@ public class Main {
     private static final Object lock = new Object();
 
     public static void main(String[] args) {
-        criarProcessos(ControladorDeProcessos.getProcessosAtivos(), Processo.getProcessosAtendidos(), Processo.getQtdAtendimentos());
+        criarProcessos(ControladorDeProcessos.getProcessosAtivos(), Processo.getProcessosAtendidos(),
+                Processo.getQtdAtendimentos());
         inativarCoordenador(ControladorDeProcessos.getProcessosAtivos());
         inativarProcesso(ControladorDeProcessos.getProcessosAtivos());
         acessarRecurso(ControladorDeProcessos.getProcessosAtivos());
         terminal();
     }
 
-    public static void criarProcessos(ArrayList<Processo> processosAtivos, ArrayList<Integer> processosAtendidos, ArrayList<Integer> qtdProcessosExecutados) {
+    public static void criarProcessos(ArrayList<Processo> processosAtivos, ArrayList<Integer> processosAtendidos,
+            ArrayList<Integer> qtdProcessosExecutados) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -30,14 +32,9 @@ public class Main {
                         if (processosAtivos.isEmpty())
                             processo.setEhCoordenador(true);
 
-                        processosAtivos.add(processo); 
+                        processosAtivos.add(processo);
                         processosAtendidos.add(processo.getPid());
                         qtdProcessosExecutados.add(0);
-                        
-                        System.out.println("Processo " + processo + " criarProcessos.");
-                        /* processo.setQtdAtendimentos() */;
-                        System.out.println("AAAAAAA" + processosAtendidos);
-
                     }
 
                     esperar(ADICIONA);
@@ -57,9 +54,7 @@ public class Main {
                 return gerarIdUnico(processosAtivos);
             }
         }
-
-/*         System.out.println("Processo Ativos " + ControladorDeProcessos.getProcessosAtivos() + " Id Unico.");
- */        return idRandom;
+        return idRandom;
     }
 
     public static void inativarProcesso(ArrayList<Processo> processosAtivos) {
@@ -79,8 +74,6 @@ public class Main {
                 }
             }
         }).start();
-/*         System.out.println("Processo Ativos " + ControladorDeProcessos.getProcessosAtivos() + " Desativar.");
- */
     }
 
     public static void inativarCoordenador(ArrayList<Processo> processosAtivos) {
@@ -99,8 +92,7 @@ public class Main {
 
                         if (coordenador != null) {
                             coordenador.destruir();
-/*                             System.out.println("Processo coordenador " + coordenador + " destruído.");
- */                        }
+                         }
                     }
                 }
             }
@@ -138,18 +130,18 @@ public class Main {
         }
     }
 
-    public static void terminal(){
-        new Thread (new Runnable(){
+    public static void terminal() {
+        new Thread(new Runnable() {
             @Override
-            public void run(){
+            public void run() {
                 int opcao;
-                do{
+                do {
                     Scanner x = new Scanner(System.in);
-                    
+
                     System.out.println("Qual opçao voce deseja?");
                     opcao = x.nextInt();
-                    
-                    switch(opcao){
+
+                    switch (opcao) {
                         case 1:
                             System.out.println("Processos " + ControladorDeProcessos.getProcessosAtivos());
                             break;
@@ -157,11 +149,13 @@ public class Main {
                         case 2:
                             System.out.println("Processos " + Processo.getProcessosAtendidos());
                             System.out.println("Execuções " + Processo.getQtdAtendimentos());
-                            
-                    }
-                    x.close();
+                            break;
 
-                }while(opcao != 3);
+                        case 3:
+                            x.close();
+                            System.exit(0);
+                    }
+                } while (opcao != 3);
             }
 
         }).start();

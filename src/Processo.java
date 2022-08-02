@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.ArrayList;
-import java.util.*;
 
 public class Processo {
 	
@@ -67,7 +66,8 @@ public class Processo {
 		ControladorDeProcessos.setConsumidor(estaEmUso ? consumidor : null);
 		
 		try {
-			System.out.println("ENTREI NO TRY 1 ");
+			System.out.println("Região crítica sendo utilizada pelo processo" + consumidor.getPid());
+
 			String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
 			FileWriter myWriter = new FileWriter(nomeArquivo, true);
 			myWriter.write("Processo " + consumidor + " esta consumindo o recurso em: " + timeStamp + "\n");
@@ -82,7 +82,6 @@ public class Processo {
  			e.printStackTrace();
 		  }
 		try {
-		System.out.println("ENTREI NO TRY 2 ");
 		  String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
 		  FileWriter logCoordenador = new FileWriter(logCoordenadorTxt, true);
 		  ArrayList<String> mensagem = new ArrayList<String>();
@@ -142,20 +141,17 @@ public class Processo {
 				e.printStackTrace();
 			}
 		String resultado = conexao.realizarRequisicao("Processo " + this + " quer consumir o recurso.\n");
-
-/* 		System.out.println("Resultado da requisicao do processo " + this + ": " + resultado);
- */		
+	
 		if(resultado.equals(Conexao.PERMITIR_ACESSO))
 			utilizarRecurso(this);
 		else if(resultado.equals(Conexao.NEGAR_ACESSO))
 			adicionarNaListaDeEspera(this);
+			System.out.println("Proceso " + this + " em espera");
 	}
 	
 	private void adicionarNaListaDeEspera(Processo processoEmEspera) {
 		getListaDeEspera().add(processoEmEspera);
 		
-	/* 	System.out.println("Processo " + this + " foi adicionado na lista de espera.");
-		System.out.println("Lista de espera: " + getListaDeEspera()); */
 	}
 	
 	private void utilizarRecurso(Processo processo) {
@@ -165,15 +161,13 @@ public class Processo {
 		utilizaRecurso = new Thread(new Runnable() {
 			@Override
 			public void run() {
-/* 				System.out.println("Processo " + processo + " está consumindo o recurso.");
- */				setRecursoEmUso(true, processo);
+				setRecursoEmUso(true, processo);
 				
 				try {
 					Thread.sleep(randomUsageTime);
 				} catch (InterruptedException e) { }
 				
-/* 				System.out.println("Processo " + processo + " parou de consumir o recurso.");
- */				processo.liberarRecurso();
+				processo.liberarRecurso();
 			}
 		});
 		utilizaRecurso.start();
@@ -185,8 +179,6 @@ public class Processo {
 		if(!isListaDeEsperaVazia()) {
 			Processo processoEmEspera = getListaDeEspera().removeFirst();
 			processoEmEspera.acessarRecursoCompartilhado();
-	/* 		System.out.println("Processo " + processoEmEspera + " foi removido da lista de espera.");
-			System.out.println("Lista de espera: " + getListaDeEspera()); */
 		}
 	}
 	
